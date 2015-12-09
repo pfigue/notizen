@@ -1,4 +1,9 @@
 # coding: utf-8
+'''
+setup.py
+
+Reference: https://packaging.python.org/en/latest/distributing/
+'''
 
 
 import sys
@@ -44,28 +49,39 @@ setup(
     author=__main_author_name__,
     author_email=__main_author_email__,
     url=__url__,
-    scripts=['bin/notizen'],  # FIXME point to cli.py:cli()
-    # Via PyPackage:
-    classifiers=[  # FIXME review this.
+    # FIXME download_url, maintainer, maintainer_email, py_modules
+    # during setup.py wheel==0.26.0 was installed for bdist_wheel
+    # scripts=['bin/notizen'],  # FIXME point to cli.py:cli()
+    # Via `PyPackage/pybuild -isN`:
+    classifiers=[ 
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
         'Intended Audience :: Developers',
+        'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Information Technology',
+        'Intended Audience :: Science/Research',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Telecommunications Industry',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
+        'Natural Language :: English',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Artistic Software',
-        'Topic :: Security'
+        'Topic :: Documentation',
+        'Topic :: Utilities'
     ],
     packages=['notizen',],
     long_description=long_description,
-    keywords=['notes', 'index', 'search'],
+    keywords=['notes', 'index', 'search', 'documentation'],
     tests_require=['pytest'],
     cmdclass = {'test': PyTest},
     zip_safe=True,
+    entry_points={
+        'console_scripts': [ 'notizen=notizen.cli:main']
+    },
 )
