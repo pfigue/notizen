@@ -62,7 +62,7 @@ Platform: '{2}'.'''
 
 
 @click.group(cls=AliasedDefaultGroup, context_settings=CONTEXT_SETTINGS)
-# FIXME click.version_option
+# FIXME click.version_option instead of this:
 @click.option('-V', '--version', is_flag=True, callback=print_version,
               expose_value=False, is_eager=True,
               help='Print the current version number and exit.')
@@ -74,25 +74,32 @@ def cli(context):
 
 
 @cli.command('updatedb')
+@click.option('--index-path', default=None,
+        help='Path to the index file.', type=str)
 @click.argument('path')
 @click.pass_obj
-def updatedb(obj, path: str) -> None:
+def updatedb(obj, index_path: str, path: str) -> None:
     '''Command to index all the notes with their tags.'''
 
     (tags_index, ) = ({}, )
     update_tags_index(tags_index, path)
 
     os.makedirs(CONFIG_DIR_PATH, exist_ok=True)
-    indices.save_indices(tags_index, INDICES_FILE_PATH)
+    indices.save_indices(tags_index, index_path)
 
 
 @cli.command()
+@click.option('--index-path', default=None,
+        help='Path to the index file.', type=str)
 @click.argument('tag')
 @click.pass_obj
-def locate(obj, tag: str) -> None:
+def locate(obj, index_path: str, tag: str) -> None:
     '''Show matching files with the given :tag.'''
 
-    (tags_index, ) = indices.load_indices(INDICES_FILE_PATH)
+    if index_path is None:
+        index_path = INDICES_FILE_PATH
+
+    (tags_index, ) = indices.load_indices(index_path)
 
     matching_files = tags_index.get(tag, None)
     if matching_files is None:

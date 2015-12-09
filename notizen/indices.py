@@ -3,12 +3,6 @@
 
 """
 FIXME
-Goal(s):
-    - Walk all the notes fetching:
-        - tags
-        - file name
-    - Store the cPickle in some ~/.config/notizen/notes-index.cpickle
-    - Make a command, clickclick.
 """
 
 import pickle
