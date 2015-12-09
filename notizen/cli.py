@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding: utf-8
 '''
 Command-line Interface to index and to search into the notes.
 '''
@@ -37,6 +38,8 @@ class AliasedDefaultGroup(AliasedGroup):
 
 
 def print_version(ctx, param, value):
+    '''Shows the --version banner.
+    With additional info in case of someone wants to report a bug.'''
     if not value or ctx.resilient_parsing:
         return
 
@@ -49,9 +52,9 @@ Authors: {5}.
 Platform: '{2}'.'''
 
     args = (notizen.__version__, notizen.__program_name__,
-    	notizen.get_platform_id(), notizen.__short_description__,
-    	notizen.__license__, ', '.join(notizen.__authors__),
-    	notizen.__url__)
+            notizen.get_platform_id(), notizen.__short_description__,
+            notizen.__license__, ', '.join(notizen.__authors__),
+            notizen.__url__)
 
     msg = msg.format(*args)
     click.echo(msg)
@@ -59,49 +62,50 @@ Platform: '{2}'.'''
 
 
 @click.group(cls=AliasedDefaultGroup, context_settings=CONTEXT_SETTINGS)
-@click.option('-V', '--version', is_flag=True, callback=print_version, expose_value=False, is_eager=True,
+# FIXME click.version_option
+@click.option('-V', '--version', is_flag=True, callback=print_version,
+              expose_value=False, is_eager=True,
               help='Print the current version number and exit.')
 @click.pass_context
 def cli(context):
-	# FIXME what to do here?
-	# context.obj = config_file
-	pass
+    # FIXME what to do here?
+    # context.obj = config_file
+    pass
 
 
 @cli.command('updatedb')
 @click.argument('path')
 @click.pass_obj
-def updatedb(obj, path:str) -> None:
-	'''Command to index all the notes with their tags.'''
-	LOGGER.debug('updatedb begins')
+def updatedb(obj, path: str) -> None:
+    '''Command to index all the notes with their tags.'''
 
-	(tags_index, ) = indices.load_indices(INDICES_FILE_PATH)
+    (tags_index, ) = ({}, )
+    update_tags_index(tags_index, path)
 
-	update_tags_index(tags_index, path)
-
-	os.makedirs(CONFIG_DIR_PATH, exist_ok=True)
-	indices.save_indices(tags_index, INDICES_FILE_PATH)
-
-	LOGGER.debug('updatedb ends.')
+    os.makedirs(CONFIG_DIR_PATH, exist_ok=True)
+    indices.save_indices(tags_index, INDICES_FILE_PATH)
 
 
 @cli.command()
 @click.argument('tag')
 @click.pass_obj
-def locate(obj, tag:str) -> None:
-	'''Show matching files with the given :tag.'''
+def locate(obj, tag: str) -> None:
+    '''Show matching files with the given :tag.'''
 
-	(tags_index, ) = indices.load_indices(INDICES_FILE_PATH)
+    (tags_index, ) = indices.load_indices(INDICES_FILE_PATH)
 
-	matching_files = tags_index.get(tag, None)
-	if matching_files is None:
-		print('No matching files with "{}" tag.\n\nMisspelled? or inexistent?'.format(tag))
-		return  # FIXME return error to shell
+    matching_files = tags_index.get(tag, None)
+    if matching_files is None:
+        msg = 'No matching files with "{}" tag.\n\nMisspelled? or inexistent?'
+        msg = msg.format(tag)
+        print(msg)
+        return  # FIXME return error to shell
+        # obj.exit(1)?
 
-	msg = '{} matching files under tag "{}":'
-	print(msg.format(len(matching_files), tag))
-	for f in matching_files:
-		print('\t{}'.format(f))
+    msg = '{} matching files under tag "{}":'
+    print(msg.format(len(matching_files), tag))
+    for f in matching_files:
+        print('\t{}'.format(f))
 
 
 def main():
