@@ -7,15 +7,15 @@ Indexing and searching of personal notes.
 Installation
 ============
 
-.. image:: https://img.shields.io/pypi/dw/stups-piu.svg
+.. image:: https://img.shields.io/pypi/dw/notizen.svg
    :target: https://pypi.python.org/pypi/notizen/
    :alt: PyPI Downloads
 
-.. image:: https://img.shields.io/pypi/v/stups-piu.svg
+.. image:: https://img.shields.io/pypi/v/notizen.svg
    :target: https://pypi.python.org/pypi/notizen/
    :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/pypi/l/stups-piu.svg
+.. image:: https://img.shields.io/pypi/l/notizen.svg
    :target: https://pypi.python.org/pypi/notizen/
    :alt: License
 
