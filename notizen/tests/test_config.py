@@ -85,3 +85,30 @@ def test_get_profile2():
         }
     r = config.get_profile(text)
     assert r == expected_result
+
+
+def test_get_profile3():
+    """Check if get_profile returns ... FIXME what?
+    no profile is selected. there is no default profile.
+    throw an error? return the profile is only one is defined?"""
+    text = """- profile:
+    - name: noti2
+    - path: /path/to/noti2
+    - engine:
+        - name: pickle
+        - file: /path/to/pickle"""
+    expected_result = {
+        'engine': {
+            'file': '/path/to/pickle',
+            'name': 'pickle'
+            },
+        'name': 'noti2',
+        'path': '/path/to/noti2',
+        }
+    try:
+        r = config.get_profile(text)
+    except Exception as w:
+        assert 1==1, "Exception rasied, everything good."
+    else:
+        assert 1==0, "Exception not raised!"
+    # FIXME improve this exception check

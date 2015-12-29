@@ -1,34 +1,27 @@
+# coding: utf-8
+
+
 import yaml
+from notizen import utils
 
-text = """- profile:
-    - name: noti1
-    - path: /path/to/noti1
-    - engine:
-        - name: elastic
-        - host: noti1-elastic
-        - port: 9200
-        - index_name: index-noti1
+# text = """- profile:
+#     - name: noti1
+#     - path: /path/to/noti1
+#     - engine:
+#         - name: elastic
+#         - host: noti1-elastic
+#         - port: 9200
+#         - index_name: index-noti1
 
-- profile:
-    - name: noti2
-    - path: /path/to/noti2
-    - engine:
-        - name: pickle
-        - file: /path/to/pickle
+# - profile:
+#     - name: noti2
+#     - path: /path/to/noti2
+#     - engine:
+#         - name: pickle
+#         - file: /path/to/pickle
 
-- default: noti2
-"""
-
-def cprint(v, prefix=None):
-    p1 = type(v)
-    p2 = str(v)
-    if prefix:
-        msg = '{} {}, {}'
-        msg = msg.format(prefix, p1, p2)
-    else:
-        msg = '{}, {}'
-        msg = msg.format(p1, p2)
-    print(msg)
+# - default: noti2
+# """
 
 
 def flat_list(l: list):
@@ -36,20 +29,20 @@ def flat_list(l: list):
     print(l)
     d = dict()
     for e in l:
-        cprint(e, '!!')
+        utils.cprint(e, '!!')
         if type(e) == dict:
             d.update(e)
         else:
             d.update({e: None})
 
-    cprint(d, '%%')
+    utils.cprint(d, '%%')
     print('%% ',d.keys())
     for e in d.keys():
         # print('** d[e]=%s,%s' % (d[e], type(d[e])))
-        cprint(d[e], '**')
+        utils.cprint(d[e], '**')
         if type(d[e]) == list:
             d[e] = flat_list(d[e])  # FIXME be careful with recursivity
-    cprint(d, '%%')
+    utils.cprint(d, '%%')
     return d
     #params = profile['profile']
     #print(params)
@@ -89,8 +82,22 @@ def process_yaml(text: str):
 
 def get_profile(text: str, profile_name: str=None) -> dict:
     (default, profiles) = process_yaml(text)
-    return profiles[profile_name] if profile_name else profiles[default]
+    if profile_name:
+        profile = profiles[profile_name]
+    elif default:
+        profile = profiles[default]
+    else:
+        raise Exception('Error: No profile specified and no default defined.')
+        # FIXME maybe throw an Except.
+    return profile
     
+
+def get_profile_from_file(filepath: str, profile_name: str=None) -> dict:
+    '''Provide a configuration profile from a file'''
+    with open(filepath, 'r') as f:
+        text = f.read()
+    return get_profile(text, profile_name)
+
 
 # from pprint import pprint
 # pprint(profiles)

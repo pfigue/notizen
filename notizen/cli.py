@@ -13,12 +13,15 @@ from clickclick import AliasedGroup
 import notizen
 from notizen import indices
 from notizen.updatedb import update_tags_index
+from notizen import config
+from notizen import utils
 
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 CONFIG_DIR_PATH = click.get_app_dir('notizen')
 INDICES_FILE_PATH = path.join(CONFIG_DIR_PATH, 'indices.pickle')
+PROFILES_FILE_PATH = path.join(CONFIG_DIR_PATH, 'profile.yaml')
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 DEFAULT_COMMAND = 'test_default'
 
@@ -74,12 +77,25 @@ def cli(context):
 
 
 @cli.command('updatedb')
+@click.option('--config-path', default=PROFILES_FILE_PATH,
+    help='Path to the configuration file.', type=str)  # FIXME is there a filepath type?
 @click.option('--index-path', default=None,
         help='Path to the index file.', type=str)
 @click.argument('path')
 @click.pass_obj
-def updatedb(obj, index_path: str, path: str) -> None:
+def updatedb(obj, config_path: str, index_path: str, path: str) -> None:
     '''Command to index all the notes with their tags.'''
+
+    profile = config.get_profile_from_file(config_path, profile_name=None)  # FIXME improve error messsage when FileNotFoundError
+    utils.cprint(profile)
+    engine = profile['engine']['name']
+    if engine == 'pickle':
+        if index_path is None:  # If not provided in the CLI,
+            index_path = profile['engine']['file']  # then take it.
+    if index_path is None:  # If still not defined, set default.
+        index_path = INDICES_FILE_PATH
+
+    utils.cprint(index_path)
 
     (tags_index, ) = ({}, )
     update_tags_index(tags_index, path)
@@ -88,16 +104,26 @@ def updatedb(obj, index_path: str, path: str) -> None:
     indices.save_indices(tags_index, index_path)
 
 
-@cli.command()
+@cli.command('locate')
+@click.option('--config-path', default=PROFILES_FILE_PATH,
+    help='Path to the configuration file.', type=str)  # FIXME is there a filepath type?
 @click.option('--index-path', default=None,
         help='Path to the index file.', type=str)
 @click.argument('tag')
 @click.pass_obj
-def locate(obj, index_path: str, tag: str) -> None:
+def locate(obj, config_path: str, index_path: str, tag: str) -> None:
     '''Show matching files with the given :tag.'''
 
-    if index_path is None:
+    profile = config.get_profile_from_file(config_path, profile_name=None)  # FIXME improve error messsage when FileNotFoundError
+    utils.cprint(profile)
+    engine = profile['engine']['name']
+    if engine == 'pickle':
+        if index_path is None:  # If not provided in the CLI,
+            index_path = profile['engine']['file']  # then take it.
+    if index_path is None:  # If still not defined, set default.
         index_path = INDICES_FILE_PATH
+
+    utils.cprint(index_path)
 
     (tags_index, ) = indices.load_indices(index_path)
 
