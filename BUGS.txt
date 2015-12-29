@@ -1,0 +1,49 @@
+$ PYTHONPATH="$PYTHONPATH:." ./venv-py3.4/bin/python -m notizen.cli locatedb
+Traceback (most recent call last):
+  File "/usr/lib/python3.4/runpy.py", line 170, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/lib/python3.4/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/home/pfigue/Workspace/notizen/notizen/cli.py", line 128, in <module>
+    main()
+  File "/home/pfigue/Workspace/notizen/notizen/cli.py", line 124, in main
+    cli()
+  File "/home/pfigue/Workspace/notizen/venv-py3.4/lib/python3.4/site-packages/click/core.py", line 716, in __call__
+    return self.main(*args, **kwargs)
+  File "/home/pfigue/Workspace/notizen/venv-py3.4/lib/python3.4/site-packages/click/core.py", line 696, in main
+    rv = self.invoke(ctx)
+  File "/home/pfigue/Workspace/notizen/venv-py3.4/lib/python3.4/site-packages/click/core.py", line 1058, in invoke
+    sub_ctx = cmd.make_context(cmd_name, args, parent=ctx)
+AttributeError: 'NoneType' object has no attribute 'make_context'
+
+
+
+$ PYTHONPATH="$PYTHONPATH:." ./venv-py3.4/bin/python notizen/cli.py locate python
+<class 'dict'>: {'key': 1234}
+<class 'tuple'>: (4, 5, 3)
+<class 'tuple'>: (4, 5, 3)
+[{'name': 'pickle'}, {'engine': [{'name': 'pickle'}, {'file': '/tmp/notizen-tests'}]}]
+!! <class 'dict'>: {'name': 'pickle'}
+!! <class 'dict'>: {'engine': [{'name': 'pickle'}, {'file': '/tmp/notizen-tests'}]}
+%% <class 'dict'>: {   'engine': [{'name': 'pickle'}, {'file': '/tmp/notizen-tests'}],
+    'name': 'pickle'}
+%%  dict_keys(['name', 'engine'])
+** <class 'str'>: 'pickle'
+** <class 'list'>: [{'name': 'pickle'}, {'file': '/tmp/notizen-tests'}]
+[{'name': 'pickle'}, {'file': '/tmp/notizen-tests'}]
+!! <class 'dict'>: {'name': 'pickle'}
+!! <class 'dict'>: {'file': '/tmp/notizen-tests'}
+%% <class 'dict'>: {'file': '/tmp/notizen-tests', 'name': 'pickle'}
+%%  dict_keys(['name', 'file'])
+** <class 'str'>: 'pickle'
+** <class 'str'>: '/tmp/notizen-tests'
+%% <class 'dict'>: {'file': '/tmp/notizen-tests', 'name': 'pickle'}
+%% <class 'dict'>: {'engine': {'file': '/tmp/notizen-tests', 'name': 'pickle'}, 'name': 'pickle'}
+<class 'dict'>: {'engine': {'file': '/tmp/notizen-tests', 'name': 'pickle'}, 'name': 'pickle'}
+<class 'str'>: '/tmp/notizen-tests'
+INFO:notizen.indices:File "/tmp/notizen-tests" was not found.
+No matching files with "python" tag.
+
+Misspelled? or inexistent?
+
+I would expect a bigger error message. Better than INFO:notizen.indices:File "/tmp/notizen-tests" was not found.
