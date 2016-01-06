@@ -21,7 +21,7 @@ To Do
 10. provide a tested packaging setup: setup.py, LICENSE, etc.
 11. Badges in README.rst fix them
 12. Switch debug level for logger.
-13. --flag to see files w.o tagging
+13. --flag to see files w/o tagging
 
 Milestones
 ==========
@@ -77,3 +77,5 @@ branch5: accept rst format and the different markdown/rst formats. Accept ; as s
 3. Version 2: Go to ElasticSearch. Stateful ES container?
 
 4. Travis CI is free for open source projects.
+
+Running tests: PYTHONPATH="$PYTHONPATH:." ./venv-py3.4/bin/py.test notizen/tests/test_config.py::test_get_profile3 -s
