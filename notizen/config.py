@@ -26,23 +26,23 @@ from notizen import utils
 
 def flat_list(l: list):
     """NOTE: can not be duplicated in the list. If there are, the last one will be used."""
-    print(l)
+    # print(l)
     d = dict()
     for e in l:
-        utils.cprint(e, '!!')
+        # utils.cprint(e, '!!')
         if type(e) == dict:
             d.update(e)
         else:
             d.update({e: None})
 
-    utils.cprint(d, '%%')
-    print('%% ',d.keys())
+    # utils.cprint(d, '%%')
+    # print('%% ',d.keys())
     for e in d.keys():
         # print('** d[e]=%s,%s' % (d[e], type(d[e])))
-        utils.cprint(d[e], '**')
+        # utils.cprint(d[e], '**')
         if type(d[e]) == list:
             d[e] = flat_list(d[e])  # FIXME be careful with recursivity
-    utils.cprint(d, '%%')
+    # utils.cprint(d, '%%')
     return d
     #params = profile['profile']
     #print(params)
@@ -83,12 +83,18 @@ def process_yaml(text: str):
 def get_profile(text: str, profile_name: str=None) -> dict:
     (default, profiles) = process_yaml(text)
     if profile_name:
-        profile = profiles[profile_name]
+        profile = profiles.get(profile_name, None)
+        msg = 'Profile named "{}" does not exist.'
+        msg = msg.format(profile_name)
     elif default:
         profile = profiles[default]
+        msg = 'Profile named "{}" defined as DEFAULT does not exist.'
+        msg = msg.format(default)
     else:
-        raise Exception('Error: No profile specified and no default defined.')
-        # FIXME maybe throw an Except.
+        profile = None
+        msg = 'No profile specified and no default defined.'  # FIXME more helpful message.
+    if not profile:
+        raise RuntimeError(msg)
     return profile
     
 

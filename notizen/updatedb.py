@@ -62,18 +62,34 @@ def get_info_from_file(filepath: str) -> dict:
             info.update({'summary': summary_str})
     return info
 
+# FIXME OBSOLETE
+# def update_tags_index(tags_index: dict, notes_path: str) -> None:
+#     '''Walks all the directory path, extracts info for each
+#     Markdown file and updates the Tags Index provided.'''
+#     # FIXME if notes_path does not exist, no error is raised.
 
-def update_tags_index(tags_index: dict, notes_path: str) -> None:
+#     for (root, dirs, files) in os.walk(notes_path):
+#         # FIXME skip .git .ipynb_checkpoints dirs.
+#         for filepath in files:
+#             filepath = path.join(root, filepath)
+#             if not RE_FILE.match(filepath):
+#                 continue
+#             # FIXME what if no tags?
+#             fileinfo = get_info_from_file(filepath)
+#             indices.add_file_to_tag_index(tags_index, fileinfo)
+
+
+def walk_and_index(notes_path: str, index_fn: "function") -> None:
     '''Walks all the directory path, extracts info for each
-    Markdown file and updates the Tags Index provided.'''
+    Markdown file and triggers the .index() of the engine.'''
     # FIXME if notes_path does not exist, no error is raised.
 
     for (root, dirs, files) in os.walk(notes_path):
-        # FIXME skip .git .ipynb_checkpoints dirs.
         for filepath in files:
             filepath = path.join(root, filepath)
+            # FIXME skip .git .ipynb_checkpoints dirs.
             if not RE_FILE.match(filepath):
                 continue
             # FIXME what if no tags?
             fileinfo = get_info_from_file(filepath)
-            indices.add_file_to_tag_index(tags_index, fileinfo)
+            index_fn(fileinfo)

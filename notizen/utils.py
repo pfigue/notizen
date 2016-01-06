@@ -28,14 +28,14 @@ def cprint(v, prefix=None):
 
 v = {'key': 1234}
 
-cprint(v)
+# cprint(v)
 # pq.pprint(v)
 # print(foo)
 # print(foo.getvalue())
 # #foo.write('abdc')
 # #foo.flush()
 # #print(foo.getvalue())
-w = (4, 5 , 3, )
-cprint(w)
-cprint(w)
+# w = (4, 5 , 3, )
+# cprint(w)
+# cprint(w)
 # print(foo.getvalue())

@@ -10,15 +10,15 @@ import logging
 from os import path
 from clickclick import AliasedGroup
 
-import notizen
-from notizen import indices
-from notizen.updatedb import update_tags_index
-from notizen import config
-from notizen import utils
+# import notizen
+from notizen.updatedb import walk_and_index
+from notizen import (config, utils, engines)
 
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
+
+# FIXME move this to a notize.config.defaults module?
 CONFIG_DIR_PATH = click.get_app_dir('notizen')
 INDICES_FILE_PATH = path.join(CONFIG_DIR_PATH, 'indices.pickle')
 PROFILES_FILE_PATH = path.join(CONFIG_DIR_PATH, 'profile.yaml')
@@ -64,6 +64,20 @@ Platform: '{2}'.'''
     ctx.exit()
 
 
+def show_matching_files(matching_files: list, tag: str) -> None:
+    '''Print the list of matching files. Or a notification if there were no results.'''
+    if matching_files is None:
+        msg = 'No matching files with "{}" tag.\n\nMisspelled? or inexistent?'
+        msg = msg.format(tag)
+        print(msg)
+        return  # FIXME return error to shell
+        # obj.exit(1)?
+    msg = '{} matching files under tag "{}":'
+    print(msg.format(len(matching_files), tag))
+    for f in matching_files:
+        print('\t{}'.format(f))
+
+
 @click.group(cls=AliasedDefaultGroup, context_settings=CONTEXT_SETTINGS)
 # FIXME click.version_option instead of this:
 @click.option('-V', '--version', is_flag=True, callback=print_version,
@@ -79,66 +93,36 @@ def cli(context):
 @cli.command('updatedb')
 @click.option('--config-path', default=PROFILES_FILE_PATH,
     help='Path to the configuration file.', type=str)  # FIXME is there a filepath type?
-@click.option('--index-path', default=None,
-        help='Path to the index file.', type=str)
+@click.option('--profile-name', default=None,
+        help='Profile to use.', type=str)  # FIXME should be optional.
 @click.argument('path')
 @click.pass_obj
-def updatedb(obj, config_path: str, index_path: str, path: str) -> None:
+def updatedb(obj, config_path: str, profile_name: str, path: str) -> None:
     '''Command to index all the notes with their tags.'''
 
-    profile = config.get_profile_from_file(config_path, profile_name=None)  # FIXME improve error messsage when FileNotFoundError
-    utils.cprint(profile)
-    engine = profile['engine']['name']
-    if engine == 'pickle':
-        if index_path is None:  # If not provided in the CLI,
-            index_path = profile['engine']['file']  # then take it.
-    if index_path is None:  # If still not defined, set default.
-        index_path = INDICES_FILE_PATH
-
-    utils.cprint(index_path)
-
-    (tags_index, ) = ({}, )
-    update_tags_index(tags_index, path)
-
-    os.makedirs(CONFIG_DIR_PATH, exist_ok=True)
-    indices.save_indices(tags_index, index_path)
+    profile = config.get_profile_from_file(config_path, profile_name=profile_name)  # FIXME improve error messsage when FileNotFoundError
+    ng = engines.get_engine(profile)
+    walk_and_index(path, ng.index_doc)
+    ng.shutdown()
 
 
 @cli.command('locate')
 @click.option('--config-path', default=PROFILES_FILE_PATH,
     help='Path to the configuration file.', type=str)  # FIXME is there a filepath type?
-@click.option('--index-path', default=None,
-        help='Path to the index file.', type=str)
+@click.option('--profile-name', default=None,
+        help='Profile to use.', type=str)  # FIXME should be optional.
 @click.argument('tag')
 @click.pass_obj
-def locate(obj, config_path: str, index_path: str, tag: str) -> None:
+def locate(obj, config_path: str, profile_name: str, tag: str) -> None:
     '''Show matching files with the given :tag.'''
 
-    profile = config.get_profile_from_file(config_path, profile_name=None)  # FIXME improve error messsage when FileNotFoundError
-    utils.cprint(profile)
-    engine = profile['engine']['name']
-    if engine == 'pickle':
-        if index_path is None:  # If not provided in the CLI,
-            index_path = profile['engine']['file']  # then take it.
-    if index_path is None:  # If still not defined, set default.
-        index_path = INDICES_FILE_PATH
+    profile = config.get_profile_from_file(config_path, profile_name=profile_name)  # FIXME improve error messsage when FileNotFoundError
+    ng = engines.get_engine(profile)
 
-    utils.cprint(index_path)
-
-    (tags_index, ) = indices.load_indices(index_path)
-
-    matching_files = tags_index.get(tag, None)
-    if matching_files is None:
-        msg = 'No matching files with "{}" tag.\n\nMisspelled? or inexistent?'
-        msg = msg.format(tag)
-        print(msg)
-        return  # FIXME return error to shell
-        # obj.exit(1)?
-
-    msg = '{} matching files under tag "{}":'
-    print(msg.format(len(matching_files), tag))
-    for f in matching_files:
-        print('\t{}'.format(f))
+    # Search and print results.
+    matching_files = ng.search_by_tags(tag)
+    show_matching_files(matching_files, tag)
+    ng.shutdown()
 
 
 def main():
