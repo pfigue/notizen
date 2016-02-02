@@ -26,7 +26,7 @@ def cprint(v, prefix=None):
         msg = msg.format(p1, p2)
     print(msg)
 
-v = {'key': 1234}
+#v = {'key': 1234}
 
 # cprint(v)
 # pq.pprint(v)

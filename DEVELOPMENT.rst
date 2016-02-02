@@ -22,6 +22,8 @@ To Do
 11. Badges in README.rst fix them
 12. Switch debug level for logger.
 13. --flag to see files w/o tagging
+14. Reorganize code: indices.py, updatedb.py, clean dead code, split config in several files and add defaults.
+15. Add a command to manage configuration.
 
 Milestones
 ==========
