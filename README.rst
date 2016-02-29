@@ -2,10 +2,11 @@
 notizen
 =======
 
-Indexing and searching of personal notes.
+I take notes in some plain text files (Markdown/rST format, usually). After a while, I've already a few files and I need to find easily those files I need.
 
-Installation
-============
+That's why I developed this tool: to index those notes and to traverse the index and locate the needed notes.
+
+At the moment it is pretty limited: only search by tag, not by title, nor date, nor content.
 
 .. image:: https://img.shields.io/pypi/dw/notizen.svg
    :target: https://pypi.python.org/pypi/notizen/
@@ -19,6 +20,9 @@ Installation
    :target: https://pypi.python.org/pypi/notizen/
    :alt: License
 
+Installation
+============
+
 .. code-block:: bash
 
 	$ sudo pip3 install --upgrade notizen
@@ -31,7 +35,6 @@ First index some notes:
 .. code-block:: bash
 
 	$ notizen updatedb my-notes/
-	$
 
 Then you can search for all files with tag python:
 
@@ -41,4 +44,4 @@ Then you can search for all files with tag python:
 	2 matching files under tag "python":
         /foo/bar/my-notes/python_annotations.md
         /foo/bar/my-notes/async-python.md
-    $
+

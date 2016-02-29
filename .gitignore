@@ -4,3 +4,24 @@ __pycache__
 *.pyc
 *~
 *.swp
+.cache/
+build/
+dist/
+*.egg-info/
+*.pickle
+venv*/
+*.sublime*
+        .cache/
+        CONFIG.md
+        build/
+        dist/
+        index.pickle
+        notizen.egg-info/
+        notizen.example.yml
+        notizen.sublime-project
+        notizen.sublime-workspace
+        notizen/file_processing.py
+        notizen/helpers.py
+        samples/
+        venv-py3.4-dev/
+        venv-pypy3.2/
