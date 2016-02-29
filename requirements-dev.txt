@@ -10,11 +10,9 @@ pytest
 # tox
 
 # Packaging
-# FIXME not yet
-# setuptools
-# twine
+twine
 pyroma
-# wheel
+wheel
 
 # You may want to install also pypy or pypy3 if you want
 # to use it instead of cpython.
