@@ -10,7 +10,7 @@ __authors__ = (
 __license__ = 'MIT'
 __program_name__ = 'notizen'
 __short_description__ = 'Indexing and searching of personal notes.'
-__url__ = 'https://bitbucket.org/pfigue/notizen'
+__url__ = 'https://github.com/pfigue/notizen'
 
 
 def get_platform_id() -> str:
